@@ -14,10 +14,10 @@ namespace DataStructures_Assignment {
       set { }
     }
     public int value;
-    public BSTNode (int value) {
+    public BSTNode(int value) {
       this.value = value;
     }
-    public bool add (int value) {
+    public bool add(int value) {
       if (value == this.value)
         return false;
       else if (value > this.value) {

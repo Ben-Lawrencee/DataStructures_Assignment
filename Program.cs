@@ -1,17 +1,19 @@
 ﻿using System;
 using System.IO;
 using System.Collections.Generic;
+using System.Collections;
 namespace DataStructures_Assignment {
   class Program {
     static void Main(string[] args) {
       
       arrayTask();
+      Console.ReadKey();
       doublyLinkedListTask();
-
-      //Binary Search Tree Task
-      int[] treeInputs = new int[] { 6, 2, 1, 7, 12, 8 }; //Binary Tree inputs
-      BST tree = new BST(treeInputs); //New binary search tree with those inputs added (in order)
-      tree.printByLevel(); //Prints binary search tree by level
+      Console.ReadKey();
+      binarySearchTreeTask();
+      Console.ReadKey();
+      hashtableTask();
+      Console.ReadKey();
     }
     
     private static void arrayTask() {
@@ -85,6 +87,65 @@ namespace DataStructures_Assignment {
         }
         Console.WriteLine($"Middle: {follower.Value}");
       }
+    }
+    private static void binarySearchTreeTask() {
+      string input = "";
+      BST tree = new BST();
+      while (input != "y") {
+        Console.Clear();
+        Console.Write("\nEnter 'y' when finsihed\nEnter number into binary search tree: ");
+        input = Console.ReadLine();
+        if (!int.TryParse(input, out int num)) {
+          if (input == "y")
+            break;
+        } else tree.add(num);
+      }
+      Console.Clear();
+      tree.printByLevel();
+      tree.printPrimes();
+    }
+    private static void hashtableTask() {
+      string input = "";
+      Console.Write("\nProvide a exit key: ");
+      string exitKey = Console.ReadLine();
+      Console.Clear();
+      Hashtable stringHT = new Hashtable();
+      Hashtable charHT = new Hashtable();
+
+      while (true) { //Iteratively ask, and add input's chars into Hashtable
+        Console.Write($"\nExit key (Case sensitive): '{exitKey}'\nEnter a input: ");
+        if (input == exitKey)
+          break;
+        if (stringHT[input] == null) //If string isn't in table
+          stringHT.Add(input, 1); //Add string with count of 1 
+        else stringHT[input] = (int)stringHT[input] + 1; //Otherwise increment count
+        foreach (char c in input) //For every character in string
+          if (charHT[c] == null) //If character isnt in hashtable
+            charHT.Add(c, 1); //Add it with count of 1
+          else charHT[c] = (int)charHT[c] + 1; //Otherwise increment
+      }
+
+      int highest = 0;
+      string highestString = "";
+      char highestChar = (char)0;
+      //Gets string frequency
+      foreach (string key in stringHT.Keys) {
+        //Find highest
+        if ((int)stringHT[key] > highest) {
+          highest = (int)stringHT[key];
+          highestString = key;
+        }
+      }
+
+      highest = 0;
+      //Gets character frequency
+      foreach (char key in charHT.Keys)
+        //Find highest
+        if ((int)charHT[key] > highest) {
+          highest = (int)charHT[key];
+          highestChar = key;
+        }
+
     }
     private static bool isPrime(int n) {
       if (n < 2)

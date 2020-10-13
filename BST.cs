@@ -23,8 +23,7 @@ namespace DataStructures_Assignment {
       if (node == null) return null;
       BSTNode replacingNode;
 
-      if (useLeft) replacingNode = getMax(node.left);
-      else replacingNode = getMin(node.right);
+      replacingNode = (useLeft) ? getMax(node.left) : getMin(node.right);
 
       delete(replacingNode, useLeft);
 
@@ -45,8 +44,7 @@ namespace DataStructures_Assignment {
         return root = new BSTNode(value);
       BSTNode node = root;
       while (node != null && !node.add(value))
-        if (value > node.value) node = node.right;
-        else node = node.left;
+        node = (value < node.value) ? node.left : node.right;
       return node;
     }
     public BSTNode getParent(BSTNode node) {
@@ -55,15 +53,13 @@ namespace DataStructures_Assignment {
     public BSTNode getParent(int value) {
       BSTNode node = root;
       while (node != null && node.left.value != value || node.right.value != value)
-        if (value > node.value) node = node.right;
-        else node = node.left;
+        node = (value > node.value) ? node.right : node.left;
       return node;
     }
     public BSTNode get(int value) {
       BSTNode node = root;
       while (node != null && node.value != value)
-        if (value > node.value) node = node.right;
-        else node = node.left;
+        node = (value < node.value) ? node.left : node.right;
       return node;
     }
     private BSTNode getMin(BSTNode node = null) {
@@ -87,109 +83,23 @@ namespace DataStructures_Assignment {
       node = root;
       int depth = 0;
       while (node != null && node.value != value) {
-        if (value < node.value)
-          node = node.left;
-        else
-          node = node.right;
+        node = (value < node.value) ? node.left : node.right;
         depth++;
       }
-      if (node == null)
-        return -1;
-      return depth;
+      return (node == null) ? -1 : depth;
     }
     public int getHeight(int value) {
       return getHeight(get(value));
     }
-    public int getHeight(BSTNode node) {
-      if (node == null)
+    public static int getHeight(BSTNode node) {
+      if (node == null) //If node is null, return -1
         return -1;
-      if (node.offSpring == 0)
+      if (node.offSpring == 0) //If there are no siblings. You have reached 0 height
         return 0;
-      else if (node.offSpring == 1)
-        if (node.left != null)
-          return getHeight(node.left) + 1;
-        else
-          return getHeight(node.right) + 1;
+      else if (node.offSpring == 1) //Otherwise find deepest sub tree and return height from bottom
+        return (node.left != null) ? getHeight(node.left) + 1 : getHeight(node.right) + 1;
       else
         return Math.Max(getHeight(node.left), getHeight(node.right)) + 1;
-    }
-    //Print Methods
-    public void printByLevel() {
-      if (root == null)
-        return;
-      Queue qu = new Queue ();
-      qu.Enqueue(root);
-
-      int layerCount = 0;
-      int counter = 1;
-      int nextCounter = 0;
-
-      BSTNode current = root;
-      BSTNode left = null;
-      BSTNode right = null;
-
-      while (current != null) {
-        qu.Dequeue();
-        counter--;
-        left = current.left;
-        right = current.right;
-        if (left != null) {
-          nextCounter++;
-          qu.Enqueue(left);
-        }
-        if (right != null) {
-          nextCounter++;
-          qu.Enqueue(right);
-        }
-        if (counter == 0) {
-          Console.Write($"\nLayer {layerCount}: [{current.value}]");
-          layerCount++;
-          counter = nextCounter;
-          nextCounter = 0;
-        } else
-          Console.Write($",[{current.value}]");
-        if (qu.Count == 0)
-          break;
-        current = (BSTNode)qu.Peek();
-      }
-      Console.WriteLine();
-    }
-    public void printPrimes() {
-      Queue qu = new Queue ();
-      qu.Enqueue(root);
-
-      int layerCount = 0;
-      int counter = 1;
-      int nextCounter = 0;
-
-      BSTNode current = root;
-      BSTNode left = null;
-      BSTNode right = null;
-
-      while (current != null) {
-        qu.Dequeue();
-        counter--;
-        left = current.left;
-        right = current.right;
-        if (left != null) {
-          nextCounter++;
-          qu.Enqueue(left);
-        }
-        if (right != null) {
-          nextCounter++;
-          qu.Enqueue(right);
-        }
-        if (counter == 0) {
-          Console.Write($"\nLayer {layerCount}: [{current.value}]");
-          layerCount++;
-          counter = nextCounter;
-          nextCounter = 0;
-        } else
-          Console.Write($",[{current.value}]");
-        if (qu.Count == 0)
-          break;
-        current = (BSTNode)qu.Peek();
-      }
     }
   }
 }

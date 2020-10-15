@@ -6,15 +6,19 @@ namespace DataStructures_Assignment {
   class Program {
     static void Main(string[] args) {
       //C:\Users\124be\Desktop\numbers.txt
+      Console.WriteLine("Array Task");
       arrayTask();
       Console.ReadKey();
       Console.Clear();
+      Console.WriteLine("Doubly Linked List Task");
       doublyLinkedListTask();
       Console.ReadKey();
       Console.Clear();
+      Console.WriteLine("Binary Search Tree Task");
       binarySearchTreeTask();
       Console.ReadKey();
       Console.Clear();
+      Console.WriteLine("Hashtable Task");
       hashtableTask();
       Console.ReadKey();
     }
@@ -29,8 +33,7 @@ namespace DataStructures_Assignment {
       try {
         data = File.ReadAllLines(path); //Get file data
       } catch {
-        Console.WriteLine($"Error reading file: {path}\nPress any key to exit...");
-        Console.ReadKey();
+        Console.WriteLine($"Error reading file: {path}");
         return;
       }
       int[] numbers = new int[data.Length];
@@ -46,40 +49,48 @@ namespace DataStructures_Assignment {
       Console.WriteLine($"Amount of Primes: {countPrime}");
     }
     private static void doublyLinkedListTask () {
-      Console.Write("\nNumber of files: ");
       int numOfFiles = 0;
       //Get number of files
-      while (true)
+      do {
+        Console.Write("Number of files: ");
         if (!int.TryParse(Console.ReadLine(), out numOfFiles) && numOfFiles >= 0) { //If input is not a int or positive
           Console.Clear();
           Console.Write("Invalid input. Try again\nNumber of files: "); //Ask again
         } else break;
+      } while (true);
       
       Console.Clear();
       if (numOfFiles == 0) //Return if there are no files to enter
         return;
       string path;
       string[] data;
-      LinkedList<int> list = new LinkedList<int>();
+      LinkedList<int> list;
       LinkedListNode<int> follower;  
       LinkedListNode<int> leader;
       int primeCount;
       //Create linked lists from user entered files. Find middle, print primes of said file
-      for (int i = 0; i < numOfFiles; i++) { //
+      for (int i = 0; i < numOfFiles; i++) {
         do {
           Console.Write($"File [{i+1}], path: ");
           path = Console.ReadLine();
           Console.Clear();
         } while (path.Length == 0 || !File.Exists(path));
         data = File.ReadAllLines(path); //Read file
+        if (data.Length == 0)
+          throw new ArgumentException("File was empty");
+        list = new LinkedList<int>();
         foreach (string line in data) //For every line in file data
           if (!int.TryParse(line, out int n)) //Try convert to int
             throw new Exception("File contains invalid number");
           else list.AddLast(n); //Add to linked list
-        Console.Clear();
-        Console.WriteLine($"\nDone [{i+1}]\n");
-
         //Find middle, using follow leader technique, also print primes
+        if (list.First == null) {
+          Console.WriteLine("List is empty");
+          return;
+        }
+        Console.Clear();
+        Console.WriteLine($"\nDone [{i+1}]");
+
         follower = list.First; //Initiates at the head
         leader = list.First; //Initiates at the head
         primeCount = 0;
@@ -88,67 +99,51 @@ namespace DataStructures_Assignment {
           leader = leader.Next;
           if (isPrime(leader.Value)) { //Print prime(s)
             if (primeCount == 0)
-              Console.Write("Primes:\n");
+              Console.Write("Primes:");
             primeCount++;
             if (primeCount % 5 == 1)
-              Console.Write($"\n[{leader.Value}]");
+              Console.Write($"\n [{leader.Value}]");
             else
               Console.Write($"{(primeCount % 5 == 1 ? "" : ",")}[{leader.Value}]");
           }
           if (leader != null) //If leader has not reached the end
             leader = leader.Next; //Increment again
         }
-        if (list.First != null) {
-          if (primeCount > 0)
-            Console.Write("\n");
-          Console.WriteLine($"Middle: {follower.Value}");
-        }
+        if (primeCount > 0)
+          Console.Write("\n");
+        Console.WriteLine($"Middle: {follower.Value}");
       }
     }
     private static void binarySearchTreeTask() {
-      string input;
-      BST tree = new BST();
+      string path;
       do {
-        Console.Write("Use file input? Y/n: ");
-        input = Console.ReadKey().KeyChar.ToString().ToLower();
+        Console.Write("File path: ");
+        path = Console.ReadLine();
         Console.Clear();
-      } while (input != "y" && input != "n");
-      bool useFile = input == "y";
-      if (useFile) {
-        string path;
-        do {
-          Console.Write("File path: ");
-          path = Console.ReadLine();
-          Console.Clear();
-        } while (path.Length == 0 || !File.Exists(path));
-        string[] lines = File.ReadAllLines(path);
-        string[] numbers;
-        int num;
-        foreach (string line in lines) {
-          numbers = line.Split(' ');
-          foreach (string number in numbers) {
-            if (!int.TryParse(number, out num)) {
-              Console.Clear();
-              Console.WriteLine($"Error reading file: {path}\nPress any key to exit...");
-              Console.ReadKey();
-              return;
-            }
-            tree.add(num);
+      } while (path.Length == 0 || !File.Exists(path));
+      string[] lines;
+      try {
+        lines = File.ReadAllLines(path);
+      } catch {
+        Console.WriteLine("Failed to read file");
+        return;
+      }
+      BST tree = new BST();
+      string[] numbers;
+      int num;
+      foreach (string line in lines) {
+        numbers = line.Split(' ');
+        foreach (string number in numbers) {
+          if (!int.TryParse(number, out num)) {
+            Console.Clear();
+            Console.WriteLine($"Error reading file: {path}");
+            return;
           }
+          tree.add(num);
         }
-      } else {
-        do {
-          Console.Write("\nEnter 'y' when finsihed\nEnter number into binary search tree: ");
-          input = Console.ReadLine();
-          if (!int.TryParse(input, out int num)) {
-            if (input.ToLower() == "y") break;
-          } else tree.add(num);
-          Console.Clear();
-        } while (input != "y");
       }
       if (tree.root == null) {
-        Console.WriteLine("Tree is empty. Press any key to exit...");
-        Console.ReadKey();
+        Console.WriteLine("Tree is empty.");
         return;
       }
       Queue qu = new Queue();
@@ -184,11 +179,10 @@ namespace DataStructures_Assignment {
       //Get primes
       qu = new Queue();
       qu.Enqueue(tree.root);
-
+      int primeCount = 0;
       layerCount = 0;
       counter = 1;
       nextCounter = 0;
-      //Print by level
       do {
         current = (BSTNode)qu.Peek();
         qu.Dequeue();
@@ -202,78 +196,41 @@ namespace DataStructures_Assignment {
           qu.Enqueue(current.right);
         }
         if (counter == 0) {
-          Console.Write($"\nLayer {layerCount}: [{current.value}]");
           layerCount++;
           counter = nextCounter;
           nextCounter = 0;
-        } else
-          Console.Write($",[{current.value}]");
+        }
+        if (isPrime(current.value)) {
+          if (++primeCount == 1)
+            Console.Write("\nPrimes:");
+          if (primeCount % 5 == 1)
+            Console.Write($"\n [{current.value}]");
+          else
+            Console.Write($"{(primeCount % 5 == 1 ? "" : ",")}[{current.value}]");
+        }
       } while (qu.Count != 0);
     }
     private static void hashtableTask() {
-      string input = "";
-      string exitKey = "";
       string path = "";
       string[] lines = null;
-      bool useFile;
-      do { //Ask if user wants to use file input
-        Console.Write("Use file input? Y/N: ");
-        input = Console.ReadKey().KeyChar.ToString().ToLower();
+      do {
+        Console.Write("Enter file path: ");
+        path = Console.ReadLine();
         Console.Clear();
-      } while (input != "y" && input != "n");
-      useFile = input == "y";
-      if (!useFile) { //Gets exit key from user if they aren't input a file
-        do {
-          Console.Write("\nProvide an exit key: ");
-          exitKey = Console.ReadLine().Trim();
-          Console.Clear();
-        } while (exitKey.Length == 0);
-      } else { //Get file if they are inputting one
-        do {
-          Console.Write("Enter file path: ");
-          path = Console.ReadLine();
-          Console.Clear();
-        } while (path.Length == 0 || !File.Exists(path));
-      }
+      } while (path.Length == 0 || !File.Exists(path));
       Hashtable stringHT = new Hashtable();
       Hashtable charHT = new Hashtable();
 
-      if (useFile) { //If user wants to input a file
-        lines = File.ReadAllLines(path);
-        string[] words;
-        for (int i = 0; i < lines.Length; i++) {
-          words = lines[i].Split(' ');
-          foreach (string word in words) {
-            if (!stringHT.ContainsKey(word)) //If string isn't in table
-              stringHT.Add(word, 1); //Add string with count of 1 
-            else
-              stringHT[word] = (int)stringHT[word] + 1; //Otherwise increment count
-            foreach (char c in word) //For every character in string
-              if (!charHT.ContainsKey(c)) //If character isnt in hashtable
-                charHT.Add(c, 1); //Add it with count of 1
-              else charHT[c] = (int)charHT[c] + 1; //Otherwise increment
-          }
-        }
-      } else { //If user wants to use hand entered inputs
-        while (true) {
-          do {
-            Console.Write($"Exit key: {exitKey}. Enter a word: ");
-            input = Console.ReadLine();
-            Console.Clear();
-          } while (input.Length != 0);
-          if (input == exitKey) {
-            if (stringHT.Count == 0) {
-              Console.WriteLine("No inputs recieved. Press any key to exit...");
-              Console.ReadKey();
-              return;
-            }
-            break;
-          }
-          if (!stringHT.ContainsKey(input)) //If string isn't in table
-            stringHT.Add(input, 1); //Add string with count of 1 
+      lines = File.ReadAllLines(path);
+      string[] words;
+      for (int i = 0; i < lines.Length; i++) {
+        words = lines[i].Split(' ');
+        foreach (string word in words) {
+          if (!stringHT.ContainsKey(word)) //If string isn't in table
+            stringHT.Add(word, 1); //Add string with count of 1 
           else
-            stringHT[input] = (int)stringHT[input] + 1; //Otherwise increment count
-          foreach (char c in input) //For every character in string
+            stringHT[word] = (int)stringHT[word] + 1; //Otherwise increment count
+          foreach (char c in word) //For every character in string
             if (!charHT.ContainsKey(c)) //If character isnt in hashtable
               charHT.Add(c, 1); //Add it with count of 1
             else charHT[c] = (int)charHT[c] + 1; //Otherwise increment

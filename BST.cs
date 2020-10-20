@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 
 namespace DataStructures_Assignment {
   class BST {
@@ -9,51 +8,52 @@ namespace DataStructures_Assignment {
     }
     public BST() { }
     public BST(int[] values) {
-      foreach (int value in values)
-        add(value);
+      foreach (int value in values) //Loop through all adding values
+        add(value); //Add them
     }
     public void add(int[] values) {
-      foreach (int value in values)
-        add(value);
+      foreach (int value in values) //Loop through all adding values
+        add(value); //Add them
     }
     public BSTNode delete(int value, bool useLeft = true) {
       return delete(get(value), useLeft);
     }
     public BSTNode delete(BSTNode node, bool useLeft = true) {
-      if (node == null) return null;
+      if (node == null) return null; //If node is null. Return null
       BSTNode replacingNode;
 
-      replacingNode = (useLeft) ? getMax(node.left) : getMin(node.right);
+      replacingNode = (useLeft) ? getMax(node.left) : getMin(node.right); //Use correct selection algorithm
 
-      delete(replacingNode, useLeft);
+      delete(replacingNode, useLeft); //Recursively delete the replacing node
 
-      if (node == root)
+      if (node == root) //If node is the root. Replace the root with replacing node
         return root = replacingNode;
 
-      BSTNode parent = getParent(node.value);
+      BSTNode parent = getParent(node.value); //Get the parent
 
+      //Find replacing node
       if (node.value > parent.value)
         parent.right = replacingNode;
       else
         parent.left = replacingNode;
 
-      return parent;
+      return parent; //Return the parent
     }
     public BSTNode add(int value) {
-      if (root == null)
+      if (root == null) //If root is null. Create one with given value
         return root = new BSTNode(value);
       BSTNode current = root;
-      while (true) {
-        if (value > current.value) {
-          if (current.right == null)
+      while (true) { //Add node iteratively
+        if (value > current.value) { //If node belongs on the right. Attempt to add
+          if (current.right == null) //If node.right is null. Set it to new node
             return current.right = new BSTNode(value);
-          else
+          else //Otherwise attempt to add to node.right
             current = current.right;
-        } else if (value < current.value) {
-          if (current.left == null)
+        } else if (value < current.value) { //If node belongs on the left. Attempt to add
+          if (current.left == null) //If node.left is null, set it to new node.
             return current.left = new BSTNode(value);
-          else current = current.left;
-        } else return current;
+          else current = current.left; //Otherwise attempt to add to node.left
+        } else return current; //If adding value is equal to current node. Return as no dupes are allowed
       }
     }
     public BSTNode getParent(BSTNode node) {
@@ -61,27 +61,28 @@ namespace DataStructures_Assignment {
     }
     public BSTNode getParent(int value) {
       BSTNode node = root;
-      while (node != null && node.left.value != value || node.right.value != value)
+      //Loop till offspring contains the given value
+      while (node != null && node.left.value != value || node.right.value != value) 
         node = (value > node.value) ? node.right : node.left;
-      return node;
+      return node; //Return it. Even if it's null
     }
     public BSTNode get(int value) {
       BSTNode node = root;
-      while (node != null && node.value != value)
+      while (node != null && node.value != value) //Loop till you find the node with given value
         node = (value < node.value) ? node.left : node.right;
       return node;
     }
     private BSTNode getMin(BSTNode node = null) {
       if (root == null) return null;
       if (node == null) node = root;
-      while (node.left != null)
+      while (node.left != null) //Continuously go left
         node = node.left;
       return node;
     }
     private BSTNode getMax(BSTNode node = null) {
       if (root == null) return null;
       if (node == null) node = root;
-      while (node.right != null)
+      while (node.right != null) //Continously go right
         node = node.right;
       return node;
     }
@@ -91,11 +92,11 @@ namespace DataStructures_Assignment {
     public int getDepth(int value, out BSTNode node) {
       node = root;
       int depth = 0;
-      while (node != null && node.value != value) {
+      while (node != null && node.value != value) { //Count up the depth to a node
         node = (value < node.value) ? node.left : node.right;
         depth++;
       }
-      return (node == null) ? -1 : depth;
+      return (node == null) ? -1 : depth; //If node wasn't found. Return -1 otherwise return depth
     }
     public int getHeight(int value) {
       return getHeight(get(value));

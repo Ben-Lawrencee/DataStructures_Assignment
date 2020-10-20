@@ -75,7 +75,13 @@ namespace DataStructures_Assignment {
           path = Console.ReadLine();
           Console.Clear();
         } while (path.Length == 0 || !File.Exists(path));
-        data = File.ReadAllLines(path); //Read file
+        try {
+          data = File.ReadAllLines(path); //Read file
+        } catch {
+          Console.WriteLine("Error trying to read file");
+          Console.ReadKey();
+          return;
+        }
         if (data.Length == 0)
           throw new ArgumentException("File was empty");
         list = new LinkedList<int>();
@@ -116,76 +122,68 @@ namespace DataStructures_Assignment {
     }
     private static void binarySearchTreeTask() {
       string path;
-      do {
+      do { //Get file from user
         Console.Write("File path: ");
         path = Console.ReadLine();
         Console.Clear();
-      } while (path.Length == 0 || !File.Exists(path));
+      } while (path.Length == 0 || !File.Exists(path)); //While file is invalid. Loop
       string[] lines;
+      //Error catch if file failed to read
       try {
         lines = File.ReadAllLines(path);
       } catch {
         Console.WriteLine("Failed to read file");
         return;
       }
+      //Create binary tree
       BST tree = new BST();
       string[] numbers;
       int num;
-      foreach (string line in lines) {
+      foreach (string line in lines) { //Loop through lines
         numbers = line.Split(' ');
-        foreach (string number in numbers) {
-          if (!int.TryParse(number, out num)) {
+        foreach (string number in numbers) { //Loop through all numbers in each line
+          if (!int.TryParse(number, out num)) { //Convert to a number. Report failure if there is one
             Console.Clear();
             Console.WriteLine($"Error reading file: {path}");
             return;
           }
-          tree.add(num);
+          tree.add(num); //Add number to tree
         }
       }
+      //If no numbers were added. Report and return
       if (tree.root == null) {
         Console.WriteLine("Tree is empty.");
         return;
       }
       Console.Clear();
       Queue<BSTNode> qu = new Queue<BSTNode>();
-      qu.Enqueue(tree.root);
-      int layerCount = 0;
-      int counter = -1;
-      int nextCounter = 0;
+      qu.Enqueue(tree.root); //Enqueue the root
       BSTNode current;
+      //Print by layer
       do {
-        if (counter <= 0) {
-          Console.WriteLine($"\nLayer: {layerCount++} ");
-          counter = nextCounter;
-        }
-        counter--;
-        current = qu.Dequeue();
-        Console.Write($"{current.value} ");
-        if (current.left != null) {
+        current = qu.Dequeue(); //Dequeue and get first node
+        Console.Write($"{current.value} "); //Print value
+        //Add offspring
+        if (current.left != null)
           qu.Enqueue(current.left);
-          nextCounter++;
-        }
-        if (current.right != null) {
+        if (current.right != null)
           qu.Enqueue(current.right);
-          nextCounter++;
-        }
-      } while (qu.Count > 0);
+      } while (qu.Count > 0); //Loop until queue is empty
+
+      //Print primes by looping through all nodes
       qu = new Queue<BSTNode>();
       qu.Enqueue(tree.root);
       Console.WriteLine("\nPrimes: ");
       do {
         current = qu.Dequeue();
-        if (isPrime(current.value))
+        if (isPrime(current.value)) //Print if node is a prime
           Console.Write($"{current.value} ");
-        if (current.left != null) {
+        //Add offspring
+        if (current.left != null)
           qu.Enqueue(current.left);
-          nextCounter++;
-        }
-        if (current.right != null) {
+        if (current.right != null)
           qu.Enqueue(current.right);
-          nextCounter++;
-        }
-      } while (qu.Count > 0);
+      } while (qu.Count > 0); //Loop until out of nodes
       Console.ReadKey();
     }
     private static void hashtableTask() {

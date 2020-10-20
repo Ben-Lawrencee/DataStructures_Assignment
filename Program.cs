@@ -149,64 +149,43 @@ namespace DataStructures_Assignment {
       Console.Clear();
       Queue<BSTNode> qu = new Queue<BSTNode>();
       qu.Enqueue(tree.root);
-
       int layerCount = 0;
-      int counter = 1;
-      BSTNode current;
+      int counter = -1;
       int nextCounter = 0;
-      //Print by level
+      BSTNode current;
       do {
-        current = qu.Dequeue();
+        if (counter <= 0) {
+          Console.WriteLine($"\nLayer: {layerCount++} ");
+          counter = nextCounter;
+        }
         counter--;
+        current = qu.Dequeue();
+        Console.Write($"{current.value} ");
         if (current.left != null) {
-          nextCounter++;
           qu.Enqueue(current.left);
+          nextCounter++;
         }
         if (current.right != null) {
-          nextCounter++;
           qu.Enqueue(current.right);
+          nextCounter++;
         }
-        if (counter == 0) {
-          Console.Write($"\nLayer {layerCount}: [{current.value}]");
-          layerCount++;
-          counter = nextCounter;
-          nextCounter = 0;
-        } else 
-          Console.Write($",[{current.value}]");
-      } while (qu.Count != 0);
-
-      //Get primes
+      } while (qu.Count > 0);
       qu = new Queue<BSTNode>();
       qu.Enqueue(tree.root);
-      int primeCount = 0;
-      layerCount = 0;
-      counter = 1;
-      nextCounter = 0;
+      Console.WriteLine("\nPrimes: ");
       do {
         current = qu.Dequeue();
-        counter--;
+        if (isPrime(current.value))
+          Console.Write($"{current.value} ");
         if (current.left != null) {
-          nextCounter++;
           qu.Enqueue(current.left);
+          nextCounter++;
         }
         if (current.right != null) {
-          nextCounter++;
           qu.Enqueue(current.right);
+          nextCounter++;
         }
-        if (counter == 0) {
-          layerCount++;
-          counter = nextCounter;
-          nextCounter = 0;
-        }
-        if (isPrime(current.value)) {
-          if (++primeCount == 1)
-            Console.Write("\nPrimes:");
-          if (primeCount % 5 == 1)
-            Console.Write($"\n [{current.value}]");
-          else
-            Console.Write($"{(primeCount % 5 == 1 ? "" : ",")}[{current.value}]");
-        }
-      } while (qu.Count != 0);
+      } while (qu.Count > 0);
       Console.ReadKey();
     }
     private static void hashtableTask() {
@@ -222,16 +201,16 @@ namespace DataStructures_Assignment {
 
       lines = File.ReadAllLines(path);
       string[] words;
-      for (int i = 0; i < lines.Length; i++) {
+      for (int i = 0; i < lines.Length; i++) { //Best Case: O(n), Average Case: O(n^2), Worst Case: O(n^4)
         words = lines[i].Split(' ');
-        foreach (string word in words) {
+        foreach (string word in words) { //Best Case: O(1), Worst Case: O(n)
           if (!stringHT.ContainsKey(word)) //If string isn't in table
-            stringHT.Add(word, 1); //Add string with count of 1 
+            stringHT.Add(word, 1); //Best Case: O(1), Worst Case: O(n) Add string with count of 1 
           else
             stringHT[word] = (int)stringHT[word] + 1; //Otherwise increment count
-          foreach (char c in word) //For every character in string
+          foreach (char c in word) //O(n) For every character in string
             if (!charHT.ContainsKey(c)) //If character isnt in hashtable
-              charHT.Add(c, 1); //Add it with count of 1
+              charHT.Add(c, 1); //Best Case: O(1), Worst Case: O(n) Add it with count of 1
             else charHT[c] = (int)charHT[c] + 1; //Otherwise increment
         }
       }
@@ -240,20 +219,20 @@ namespace DataStructures_Assignment {
       string highestString = "";
       char highestChar = (char)0;
       //Gets string frequency
-      foreach (string key in stringHT.Keys) //O(n)
+      foreach (string key in stringHT.Keys) //Best Case: O(n), Average Case: O(n), Worst Case: O(n^2)
         //Find highest
         if ((int)stringHT[key] > highest) {
-          highest = (int)stringHT[key];
+          highest = (int)stringHT[key]; //O(n)
           highestString = key;
         }
       Console.WriteLine($"Most popular string: '{highestString}'");
 
       highest = 0;
       //Gets character frequency
-      foreach (char key in charHT.Keys)
+      foreach (char key in charHT.Keys) //Best Case: O(n), Average Case: O(n), Worst Case: O(n^2)
         //Find highest
         if ((int)charHT[key] > highest) {
-          highest = (int)charHT[key];
+          highest = (int)charHT[key]; //O(n)
           highestChar = key;
         }
       Console.WriteLine($"Most popular character: '{highestChar}'");

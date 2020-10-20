@@ -146,18 +146,17 @@ namespace DataStructures_Assignment {
         Console.WriteLine("Tree is empty.");
         return;
       }
-      Queue qu = new Queue();
+      Console.Clear();
+      Queue<BSTNode> qu = new Queue<BSTNode>();
       qu.Enqueue(tree.root);
 
       int layerCount = 0;
       int counter = 1;
-      int nextCounter = 0;
-
       BSTNode current;
+      int nextCounter = 0;
       //Print by level
       do {
-        current = (BSTNode)qu.Peek();
-        qu.Dequeue();
+        current = qu.Dequeue();
         counter--;
         if (current.left != null) {
           nextCounter++;
@@ -172,20 +171,19 @@ namespace DataStructures_Assignment {
           layerCount++;
           counter = nextCounter;
           nextCounter = 0;
-        } else
+        } else 
           Console.Write($",[{current.value}]");
       } while (qu.Count != 0);
 
       //Get primes
-      qu = new Queue();
+      qu = new Queue<BSTNode>();
       qu.Enqueue(tree.root);
       int primeCount = 0;
       layerCount = 0;
       counter = 1;
       nextCounter = 0;
       do {
-        current = (BSTNode)qu.Peek();
-        qu.Dequeue();
+        current = qu.Dequeue();
         counter--;
         if (current.left != null) {
           nextCounter++;
@@ -209,6 +207,7 @@ namespace DataStructures_Assignment {
             Console.Write($"{(primeCount % 5 == 1 ? "" : ",")}[{current.value}]");
         }
       } while (qu.Count != 0);
+      Console.ReadKey();
     }
     private static void hashtableTask() {
       string path = "";

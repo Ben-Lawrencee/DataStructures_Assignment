@@ -42,10 +42,19 @@ namespace DataStructures_Assignment {
     public BSTNode add(int value) {
       if (root == null)
         return root = new BSTNode(value);
-      BSTNode node = root;
-      while (node != null && !node.add(value))
-        node = (value < node.value) ? node.left : node.right;
-      return node;
+      BSTNode current = root;
+      while (true) {
+        if (value > current.value) {
+          if (current.right == null)
+            return current.right = new BSTNode(value);
+          else
+            current = current.right;
+        } else if (value < current.value) {
+          if (current.left == null)
+            return current.left = new BSTNode(value);
+          else current = current.left;
+        } else return current;
+      }
     }
     public BSTNode getParent(BSTNode node) {
       return getParent(node.value);
@@ -94,9 +103,9 @@ namespace DataStructures_Assignment {
     public static int getHeight(BSTNode node) {
       if (node == null) //If node is null, return -1
         return -1;
-      if (node.offSpring == 0) //If there are no siblings. You have reached 0 height
+      if (node.left == null && node.right == null) //If there are no siblings. You have reached 0 height
         return 0;
-      else if (node.offSpring == 1) //Otherwise find deepest sub tree and return height from bottom
+      else if (node.left != null ^ node.right == null) //Otherwise find deepest sub tree and return height from bottom
         return (node.left != null) ? getHeight(node.left) + 1 : getHeight(node.right) + 1;
       else
         return Math.Max(getHeight(node.left), getHeight(node.right)) + 1;
